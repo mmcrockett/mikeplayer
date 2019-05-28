@@ -47,7 +47,8 @@ module MikePlayer
     def play
       @playlist.shuffle! if @settings.shuffle?
 
-      print "Playlist #{@playlist.info}\n"
+      puts "Mike Player v#{MikePlayer::VERSION}"
+      puts "Playlist #{@playlist.info}\n"
 
       if @playlist.finished?
         puts "No songs in playlist."
