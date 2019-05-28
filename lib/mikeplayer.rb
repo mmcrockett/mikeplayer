@@ -19,6 +19,7 @@ module MikePlayer
     def initialize(options, *args)
       @settings  = Settings.new(options)
       @playlist  = Playlist.new(@settings.playlist)
+      @minutes   = @settings.minutes
       @command   = ''
       @pid       = nil
       @timer_start = nil
@@ -67,6 +68,7 @@ module MikePlayer
           @state   = PLAYING
           @pid     = thread_info.pid
           indicator = ''
+          info_changed = false
 
           while (true == pid_alive?)
             pause_if_over_time_limit
@@ -92,6 +94,7 @@ module MikePlayer
 
               print(info)
 
+              info_changed = false
               $stdout.flush
             end
 
@@ -178,9 +181,12 @@ module MikePlayer
     def press_pause
       if (true == playing?)
         kill("STOP")
+        @pause_time = Time.now
         @state = PAUSED
       elsif (true == paused?)
         kill("CONT")
+        @song_start += (Time.now - @pause_time)
+        @pause_time = nil
         @state = PLAYING
       else
         print("Confused state #{@state}.")
@@ -240,7 +246,15 @@ module MikePlayer
     end
 
     def playing_time
-      return (Time.now - @song_start).to_i
+      return (Time.now - @song_start).to_i - pause_time
+    end
+
+    def pause_time
+      if (@pause_time.nil?)
+        return 0
+      else
+        return (Time.now - @pause_time).to_i
+      end
     end
 
     def minutes_remaining

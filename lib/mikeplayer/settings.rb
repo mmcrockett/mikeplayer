@@ -5,7 +5,7 @@ module MikePlayer
     SETTINGS_DIRECTORY = '.mikeplayer'.freeze
     PL_FILE_ENDING     = '.mpl'.freeze
 
-    attr_reader :random, :music_dir, :playlist, :volume
+    attr_reader :random, :music_dir, :playlist, :volume, :minutes
 
     def initialize(options)
       @shuffle   = options[:shuffle]
