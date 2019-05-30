@@ -80,7 +80,7 @@ module MikePlayer
             if (true == playing?)
               indicator = "#{'>' * (playing_time % INDICATOR_SIZE)}".ljust(INDICATOR_SIZE)
               info_changed = true
-            elsif (true == paused?) && (PAUSE_INDICATOR != indicator)
+            elsif (true == paused?) && (false == indicator.include?(PAUSE_INDICATOR))
               indicator = PAUSE_INDICATOR.ljust(INDICATOR_SIZE)
               info_changed = true
             end
