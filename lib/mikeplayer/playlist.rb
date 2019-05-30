@@ -55,7 +55,9 @@ module MikePlayer
     end
 
     def previous
-      @song_i -= 1 unless @song_i <= 0
+      @song_i -= 1
+
+      @song_i = 0 if @song_i < 0
 
       return self.current
     end
@@ -87,7 +89,7 @@ module MikePlayer
     end
 
     def finished?
-      return @song_i == @songs.size
+      return @song_i >= @songs.size
     end
 
     private

@@ -75,7 +75,7 @@ module MikePlayer
             pause_if_over_time_limit
 
             if (true == playing?)
-              indicator = "#{'>' * (playing_time % 4)}"
+              indicator = "#{'>' * (playing_time % 4)}".ljust(4)
               info_changed = true
             elsif (true == paused?) && (PAUSE_INDICATOR != indicator)
               indicator = PAUSE_INDICATOR
@@ -89,11 +89,13 @@ module MikePlayer
                 mindicator = "(#{minutes_remaining}↓) "
               end
 
-              info  = "#{info_prefix} #{song.length_str(playing_time)} #{mindicator}#{indicator}".ljust(display_width)
+              print("\r" << ' '.ljust(display_width))
 
-              display_width = info.size
+              info  = "#{info_prefix} #{song.length_str(playing_time)} #{mindicator}#{indicator}"
 
               print(info)
+
+              display_width = info.size
 
               info_changed = false
               $stdout.flush
@@ -108,17 +110,18 @@ module MikePlayer
           @pid = nil
 
           if (true == playing?)
-            next_song
+            next_song unless @pid.nil?
           end
         end
 
         @pid   = nil
+        print("\r\n")
         exit
       end
 
       wait_on_user
 
-      puts ""
+      print("\r\n")
     end
 
     def cmd_exist?(cmd)
@@ -208,6 +211,7 @@ module MikePlayer
       end
 
       @state = STOPPED
+      @pid   = nil
     end
 
     def pid_alive?(pid = @pid)
@@ -227,7 +231,9 @@ module MikePlayer
     def previous_song
       stop_song
 
-      @playlist.previous
+      if (playing_time < 10)
+        @playlist.previous
+      end
     end
 
     def kill(signal)
