@@ -10,7 +10,8 @@ require 'mikeplayer/song'
 
 module MikePlayer
   class Player
-    PAUSE_INDICATOR    = " ||".freeze
+    PAUSE_INDICATOR    = "||".freeze
+    INDICATOR_SIZE     = 4
     SLEEP_SETTING      = 0.5
     STOPPED            = :stopped
     PLAYING            = :playing
@@ -50,19 +51,21 @@ module MikePlayer
       puts "Mike Player v#{MikePlayer::VERSION}"
       puts "Playlist #{@playlist.info}\n"
 
-      if @playlist.finished?
+      if (0 == @playlist.size)
         puts "No songs in playlist."
         
         exit 1
       end
 
       @thread = Thread.new do
+        @song_i         = 0
         display_width   = 0
 
-        while (false == @playlist.finished?)
-          song        = @playlist.current
+        while (@song_i < @playlist.size)
+          song        = @playlist.get(@song_i)
           @song_start = Time.now
-          info_prefix = "\r#{@playlist.current_song_info}".freeze
+          @pause_time = nil
+          info_prefix = "\r#{@playlist.song_info(@song_i)}".freeze
 
           stdin, stdother, thread_info = Open3.popen2e('play', '--no-show-progress', '--volume', @settings.volume, song.filename)
 
@@ -75,10 +78,10 @@ module MikePlayer
             pause_if_over_time_limit
 
             if (true == playing?)
-              indicator = "#{'>' * (playing_time % 4)}".ljust(4)
+              indicator = "#{'>' * (playing_time % INDICATOR_SIZE)}".ljust(INDICATOR_SIZE)
               info_changed = true
             elsif (true == paused?) && (PAUSE_INDICATOR != indicator)
-              indicator = PAUSE_INDICATOR
+              indicator = PAUSE_INDICATOR.ljust(INDICATOR_SIZE)
               info_changed = true
             end
 
@@ -109,8 +112,8 @@ module MikePlayer
 
           @pid = nil
 
-          if (true == playing?)
-            next_song unless @pid.nil?
+          if (true == playing?) && (playing_time >= (song.length - 1))
+            next_song
           end
         end
 
@@ -198,10 +201,6 @@ module MikePlayer
     end
 
     def stop_song
-      if (true == paused?)
-        kill("CONT")
-      end
-
       kill("INT")
 
       sleep 0.2
@@ -211,7 +210,6 @@ module MikePlayer
       end
 
       @state = STOPPED
-      @pid   = nil
     end
 
     def pid_alive?(pid = @pid)
@@ -223,16 +221,20 @@ module MikePlayer
     end
 
     def next_song
+      debug('n')
       stop_song
 
-      @playlist.next
+      @song_i += 1
     end
 
     def previous_song
+      debug('p')
       stop_song
 
       if (playing_time < 10)
-        @playlist.previous
+        @song_i -= 1 unless @song_i <= 0
+      else
+        debug('x')
       end
     end
 
@@ -270,6 +272,10 @@ module MikePlayer
       else
         return (@minutes - ((Time.now - @timer_start).to_i / 60).to_i)
       end
+    end
+
+    def debug(str)
+      print(str) if @settings.debug?
     end
   end
 end

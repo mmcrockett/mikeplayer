@@ -23,7 +23,7 @@ module MikePlayer
     end
 
     def length
-      return @mp3info.length
+      return @mp3info.length || 0
     end
 
     def length_str(elapsed_time)

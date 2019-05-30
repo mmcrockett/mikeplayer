@@ -5,12 +5,11 @@ module MikePlayer
     def initialize(filename)
       @filename = filename
       @songs    = []
-      @song_i   = 0
       @length   = 0
     
       load_songs
 
-      @loaded_song_count = @songs.size
+      @loaded_song_count = self.size
     end
 
     def <<(song)
@@ -44,22 +43,8 @@ module MikePlayer
       return self
     end
 
-    def current
-      return @songs[@song_i]
-    end
-
-    def next
-      @song_i += 1
-
-      return self.current
-    end
-
-    def previous
-      @song_i -= 1
-
-      @song_i = 0 if @song_i < 0
-
-      return self.current
+    def get(i)
+      return @songs[i]
     end
 
     def shuffle!
@@ -79,17 +64,17 @@ module MikePlayer
     end
 
     def info
-      return "#{self.name} loaded #{@loaded_song_count} songs with length #{Song.as_duration_str(@length)}, added #{@songs.size - @loaded_song_count}"
+      return "#{self.name} loaded #{@loaded_song_count} songs with length #{Song.as_duration_str(@length)}, added #{self.size - @loaded_song_count}"
     end
 
-    def current_song_info
-      song_i_str = "#{@song_i + 1}".rjust(@songs.size.to_s.size)
+    def song_info(i)
+      song_i_str = "#{i + 1}".rjust(self.size.to_s.size)
 
-      return "Playing (#{song_i_str}/#{@songs.size}): #{current.info}".freeze
+      return "Playing (#{song_i_str}/#{self.size}): #{get(i).info}".freeze
     end
 
-    def finished?
-      return @song_i >= @songs.size
+    def size
+      return @songs.size
     end
 
     private

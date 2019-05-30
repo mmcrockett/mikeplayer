@@ -16,6 +16,7 @@ module MikePlayer
       @music_dir = options[:directory] || File.join(@home, DEFAULT_DIRECTORY)
       @settings_dir = options[:settings] || File.join(@home, SETTINGS_DIRECTORY)
       @minutes   = options[:minutes].to_i
+      @debug     = options[:debug]
       @random    = options[:random].to_i
 
       if (false == Dir.exist?(@settings_dir))
@@ -33,6 +34,10 @@ module MikePlayer
 
     def random?
       return 0 < @random
+    end
+
+    def debug?
+      return (true == @debug)
     end
 
     def overwrite?

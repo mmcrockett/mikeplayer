@@ -21,6 +21,7 @@ OptionParser.new do |opt|
   opt.on('-l', '--list', 'List songs in playlist.') { |o| options[:list] = true; }
   opt.on('-d', '--directory name', 'Directory to find mp3s.') { |o| options[:directory] = o }
   opt.on('-t', '--time minutes', 'Limit time to number of minutes.') { |o| options[:minutes] = o }
+  opt.on('-x', '--debug', 'Turn on debug.') { |o| options[:debug] = true }
 end.parse!
 
 MikePlayer::Player.new(options, ARGV).play
