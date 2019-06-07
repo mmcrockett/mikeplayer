@@ -64,7 +64,7 @@ module MikePlayer
     end
 
     def info
-      return "#{self.name} loaded #{@loaded_song_count} songs with length #{Song.as_duration_str(@length)}, added #{self.size - @loaded_song_count}"
+      return "#{self.name} loaded #{@loaded_song_count} and added #{self.size - @loaded_song_count} songs with length #{Song.as_duration_str(@length)}"
     end
 
     def song_info(i)
