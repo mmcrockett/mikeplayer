@@ -28,7 +28,7 @@ Gem::Specification.new do |gem|
   gem.require_paths = ['lib']
   gem.licenses      = ['MIT']
 
-  gem.add_dependency 'json', '~> 1.8'
+  gem.add_dependency 'json', '~> 2.5'
   gem.add_dependency 'ruby-mp3info', '~> 0.8'
   gem.add_dependency 'minitest', '~> 5'
   gem.add_development_dependency 'rake', '~> 12'
