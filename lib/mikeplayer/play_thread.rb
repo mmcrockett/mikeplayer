@@ -38,9 +38,19 @@ module MikePlayer
       @elapsed += Time.now.to_i - @start_t
       @start_t  = 0
 
-      sleep 0.2
+      10.times do
+        break unless alive?
+
+        sleep 0.1
+      end
 
       kill('KILL')
+
+      10.times do
+        break unless alive?
+
+        sleep 0.1
+      end
 
       @paused = true
     end
@@ -103,7 +113,11 @@ module MikePlayer
 
       @pid = thread_info.pid
 
-      sleep 0.2
+      10.times do
+        break if alive?
+
+        sleep 0.2
+      end
 
       raise "Failed to play #{stdother.read}" unless alive?
 
