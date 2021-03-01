@@ -88,11 +88,17 @@ module MikePlayer
     end
 
     def self.cmd_exist?(cmd)
-      if (true != system('command'))
-        raise "Missing 'command' command, which is used to test compatibility."
+      if @test_cmd.nil?
+        if system('command')
+          @test_cmd = 'command -v'
+        elsif system('bash -c "command"')
+          @test_cmd = 'bash -c "command -v"'
+        else
+          raise "Missing 'command' command, which is used to test compatibility."
+        end
       end
 
-      if (true != system("command -v #{cmd} >/dev/null 2>&1"))
+      if (true != system("#{@test_cmd} #{cmd} >/dev/null 2>&1"))
         return false
       end
 
