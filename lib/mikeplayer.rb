@@ -49,8 +49,13 @@ module MikePlayer
     def play
       @playlist.shuffle! if @settings.shuffle?
 
-      puts "Mike Player v#{MikePlayer::VERSION}"
-      puts "Playlist #{@playlist.info}\n"
+      if @settings.fullscreen?
+        Display.enter_fullscreen
+        at_exit { Display.exit_fullscreen }
+      end
+
+      puts Display.colorize("Mike Player v#{MikePlayer::VERSION}", Display::BANNER_COLOR)
+      puts "#{Display.colorize("Playlist #{@playlist.info}", Display::DIM_COLOR)}\n"
 
       if (0 == @playlist.size)
         puts "No songs in playlist."
@@ -82,6 +87,8 @@ module MikePlayer
           if playing? && @player.stopped?
             next_song
           elsif paused?
+            @display.display!(song.length_str(@player.elapsed), minutes_remaining)
+
             while paused?
               sleep(sleep_time)
             end

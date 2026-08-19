@@ -14,14 +14,15 @@ OptionParser.new do |opt|
 
   EOF
   opt.on('-s', '--shuffle', 'Shuffle playlist.') { |o| options[:shuffle] = true }
-  opt.on('-r', '--random n', 'Create playlist with randomly picked n songs.') { |o| options[:random] = o.to_i }
+  opt.on('-r', '--random n', Integer, 'Create playlist with randomly picked n songs.') { |o| options[:random] = o }
   opt.on('-o', '--overwrite', 'Overwrite playlist.') { |o| options[:overwrite] = true }
-  opt.on('-v', '--volume n', 'Changes default volume.') { |o| options[:volume] = o }
+  opt.on('-v', '--volume n', Float, 'Changes default volume.') { |o| options[:volume] = o }
   opt.on('-p', '--playlist name', 'Play playlist name.') { |o| options[:playlist] = o }
   opt.on('-l', '--list', 'List songs in playlist.') { |o| options[:list] = true; }
   opt.on('-d', '--directory name', 'Directory to find mp3s.') { |o| options[:directory] = o }
-  opt.on('-t', '--time minutes', 'Limit time to number of minutes.') { |o| options[:minutes] = o }
+  opt.on('-t', '--time minutes', Integer, 'Limit time to number of minutes.') { |o| options[:minutes] = o }
   opt.on('-x', '--debug', 'Turn on debug.') { |o| options[:debug] = true }
+  opt.on('-f', '--fullscreen', 'Use an alternate full-screen buffer while playing.') { |o| options[:fullscreen] = true }
 end.parse!
 
 MikePlayer::Player.new(options, ARGV).play

@@ -70,7 +70,7 @@ module MikePlayer
     def song_info(i)
       song_i_str = "#{i + 1}".rjust(self.size.to_s.size)
 
-      return "Playing (#{song_i_str}/#{self.size}): #{get(i).info}".freeze
+      return { position: "(#{song_i_str}/#{self.size})", title: get(i).info }
     end
 
     def size

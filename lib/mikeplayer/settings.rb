@@ -16,8 +16,9 @@ module MikePlayer
       @music_dir = options[:directory] || File.join(@home, DEFAULT_DIRECTORY)
       @settings_dir = options[:settings] || File.join(@home, SETTINGS_DIRECTORY)
       @minutes   = options[:minutes].to_i
-      @debug     = options[:debug]
-      @random    = options[:random].to_i
+      @debug      = options[:debug]
+      @random     = options[:random].to_i
+      @fullscreen = options[:fullscreen]
 
       if (false == Dir.exist?(@settings_dir))
         Dir.mkdir(@settings_dir)
@@ -46,6 +47,10 @@ module MikePlayer
 
     def list?
       return true == @list
+    end
+
+    def fullscreen?
+      return true == @fullscreen
     end
 
     private
