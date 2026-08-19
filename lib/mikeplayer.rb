@@ -64,7 +64,7 @@ module MikePlayer
       end
 
       @thread = Thread.new do
-        @display = Display.new
+        @display = Display.new(fullscreen: @settings.fullscreen?)
         @song_i  = 0
 
         while (@song_i < @playlist.size)
@@ -84,14 +84,14 @@ module MikePlayer
             sleep(sleep_time)
           end
 
-          if playing? && @player.stopped?
-            next_song
-          elsif paused?
+          if @player.paused?
             @display.display!(song.length_str(@player.elapsed), minutes_remaining)
 
             while paused?
               sleep(sleep_time)
             end
+          elsif playing?
+            next_song
           end
         end
 
