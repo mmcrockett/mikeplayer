@@ -12,10 +12,23 @@ module MikePlayer
     PLAY_COLOR      = "\e[32m".freeze   # green
     PAUSE_COLOR     = "\e[1;31m".freeze # bold red
 
+    ENTER_ALT_SCREEN = "\e[?1049h\e[2J\e[H".freeze
+    EXIT_ALT_SCREEN  = "\e[?1049l".freeze
+
     def self.colorize(text, color)
       return text unless $stdout.tty?
 
       "#{color}#{text}#{RESET}"
+    end
+
+    def self.enter_fullscreen
+      print(ENTER_ALT_SCREEN)
+      $stdout.flush
+    end
+
+    def self.exit_fullscreen
+      print(EXIT_ALT_SCREEN)
+      $stdout.flush
     end
 
     def initialize

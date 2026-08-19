@@ -49,6 +49,11 @@ module MikePlayer
     def play
       @playlist.shuffle! if @settings.shuffle?
 
+      if @settings.fullscreen?
+        Display.enter_fullscreen
+        at_exit { Display.exit_fullscreen }
+      end
+
       puts Display.colorize("Mike Player v#{MikePlayer::VERSION}", Display::BANNER_COLOR)
       puts "#{Display.colorize("Playlist #{@playlist.info}", Display::DIM_COLOR)}\n"
 

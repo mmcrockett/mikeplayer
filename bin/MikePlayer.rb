@@ -22,6 +22,7 @@ OptionParser.new do |opt|
   opt.on('-d', '--directory name', 'Directory to find mp3s.') { |o| options[:directory] = o }
   opt.on('-t', '--time minutes', Integer, 'Limit time to number of minutes.') { |o| options[:minutes] = o }
   opt.on('-x', '--debug', 'Turn on debug.') { |o| options[:debug] = true }
+  opt.on('-f', '--fullscreen', 'Use an alternate full-screen buffer while playing.') { |o| options[:fullscreen] = true }
 end.parse!
 
 MikePlayer::Player.new(options, ARGV).play
