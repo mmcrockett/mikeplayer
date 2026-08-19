@@ -82,6 +82,8 @@ module MikePlayer
           if playing? && @player.stopped?
             next_song
           elsif paused?
+            @display.display!(song.length_str(@player.elapsed), minutes_remaining)
+
             while paused?
               sleep(sleep_time)
             end
