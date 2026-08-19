@@ -27,6 +27,7 @@ module MikePlayer
       @timer_start = Time.now if (@minutes > 0)
       @state     = STOPPED
       @player    = PlayThread.new(volume: @settings.volume)
+      @song_mutex = Mutex.new
 
       if (true == @settings.list?)
         @songs.map { |song| File.basename(song) }.sort.each {|song| puts "#{File.basename(song)}"}
@@ -158,27 +159,35 @@ module MikePlayer
     end
 
     def next_song
-      debug('n')
+      @song_mutex.synchronize do
+        return if changing?
 
-      @state = SONG_CHANGE
+        debug('n')
 
-      @player.stop
+        @state = SONG_CHANGE
 
-      @song_i += 1
+        @player.stop
+
+        @song_i += 1
+      end
     end
 
     def previous_song
-      debug('p')
+      @song_mutex.synchronize do
+        return if changing?
 
-      @state = SONG_CHANGE
+        debug('p')
 
-      if (@player.elapsed < 10)
-        @song_i -= 1 if @song_i.positive?
-      else
-        debug('x')
+        @state = SONG_CHANGE
+
+        if (@player.elapsed < 10)
+          @song_i -= 1 if @song_i.positive?
+        else
+          debug('x')
+        end
+
+        @player.stop
       end
-
-      @player.stop
     end
 
     def pause_if_over_time_limit

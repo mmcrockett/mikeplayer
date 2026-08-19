@@ -34,6 +34,5 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'json', '~> 2.5'
   spec.add_dependency 'ruby-mp3info', '~> 0.8'
   spec.add_dependency 'minitest', '~> 5'
-  spec.add_development_dependency 'rake', '~> 12'
-  spec.add_development_dependency 'byebug', '~> 11'
+  spec.add_development_dependency 'rake', '~> 13'
 end

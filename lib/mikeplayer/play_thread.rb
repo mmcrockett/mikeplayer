@@ -3,11 +3,12 @@ module MikePlayer
     def initialize(volume: 1.0)
       check_system
 
-      @pid     = nil
-      @volume  = volume
-      @start_t = 0
-      @elapsed = 0
-      @paused  = false
+      @pid         = nil
+      @wait_thread = nil
+      @volume      = volume
+      @start_t     = 0
+      @elapsed     = 0
+      @paused      = false
     end
 
     def play(file)
@@ -38,25 +39,19 @@ module MikePlayer
       @elapsed += Time.now.to_i - @start_t
       @start_t  = 0
 
-      10.times do
-        break unless alive?
-
-        sleep 0.1
-      end
+      @wait_thread&.join(1)
 
       kill('KILL')
 
-      10.times do
-        break unless alive?
-
-        sleep 0.1
-      end
+      @wait_thread&.join
 
       @paused = true
     end
 
     def kill(signal)
       Process.kill(signal, @pid) if alive?
+    rescue Errno::ESRCH
+      nil
     end
 
     def alive?
@@ -117,7 +112,8 @@ module MikePlayer
 
       stdin, stdother, thread_info = Open3.popen2e(*args)
 
-      @pid = thread_info.pid
+      @pid         = thread_info.pid
+      @wait_thread = thread_info
 
       10.times do
         break if alive?
