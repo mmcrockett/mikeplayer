@@ -5,9 +5,16 @@ module MikePlayer
 
     RESET           = "\e[0m".freeze
     TITLE_COLOR     = "\e[1;36m".freeze # bold cyan
+    DIM_COLOR       = "\e[2m".freeze    # dim gray
     COUNTDOWN_COLOR = "\e[33m".freeze   # yellow
     PLAY_COLOR      = "\e[32m".freeze   # green
     PAUSE_COLOR     = "\e[1;31m".freeze # bold red
+
+    def self.colorize(text, color)
+      return text unless $stdout.tty?
+
+      "#{color}#{text}#{RESET}"
+    end
 
     def initialize
       @width     = 0
@@ -18,7 +25,8 @@ module MikePlayer
     end
 
     def song_info=(v)
-      @song_info = v.freeze
+      @position = v[:position].freeze
+      @title    = v[:title].freeze
     end
 
     def elapsed=(v)
@@ -40,12 +48,14 @@ module MikePlayer
 
       mindicator = "(#{countdown}↓) " if countdown
 
-      title     = colorize(@song_info, TITLE_COLOR)
+      position  = colorize(@position, DIM_COLOR)
+      title     = colorize(@title, TITLE_COLOR)
+      elapsed   = colorize(elapsed_info, DIM_COLOR)
       indicator = colorize(@indicator, @paused ? PAUSE_COLOR : PLAY_COLOR)
       count     = countdown ? colorize(mindicator, COUNTDOWN_COLOR) : ''
 
-      plain_info = "#{@song_info} #{elapsed_info} #{mindicator}#{@indicator}"
-      info       = "\r#{title} #{elapsed_info} #{count}#{indicator}"
+      plain_info = "Playing #{@position}: #{@title} #{elapsed_info} #{mindicator}#{@indicator}"
+      info       = "\rPlaying #{position}: #{title} #{elapsed} #{count}#{indicator}"
 
       print("\r" << ' '.ljust(@width))
 

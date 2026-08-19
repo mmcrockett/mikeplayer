@@ -49,8 +49,8 @@ module MikePlayer
     def play
       @playlist.shuffle! if @settings.shuffle?
 
-      puts "Mike Player v#{MikePlayer::VERSION}"
-      puts "Playlist #{@playlist.info}\n"
+      puts Display.colorize("Mike Player v#{MikePlayer::VERSION}", Display::TITLE_COLOR)
+      puts "#{Display.colorize("Playlist #{@playlist.info}", Display::DIM_COLOR)}\n"
 
       if (0 == @playlist.size)
         puts "No songs in playlist."
