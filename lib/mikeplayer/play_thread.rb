@@ -16,6 +16,7 @@ module MikePlayer
 
       if paused?
         start_position = @elapsed
+        @paused        = false
       else
         @elapsed = 0
       end
