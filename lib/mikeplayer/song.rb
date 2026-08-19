@@ -4,12 +4,17 @@ module MikePlayer
 
     def initialize(filename)
       @filename = filename
-      @mp3info  = Mp3Info.new(filename)
+
+      Mp3Info.open(filename) do |mp3info|
+        @artist = mp3info.tag.artist.to_s
+        @title  = mp3info.tag.title.to_s
+        @length = mp3info.length || 0
+      end
     end
 
     def info
-      artist = "#{@mp3info.tag.artist}"
-      title  = "#{@mp3info.tag.title}"
+      artist = @artist
+      title  = @title
 
       if (true == artist.empty?) && (true == title.empty?)
         return File.basename(@filename, '.mp3')
@@ -23,7 +28,7 @@ module MikePlayer
     end
 
     def length
-      return @mp3info.length || 0
+      return @length
     end
 
     def length_str(elapsed_time)
