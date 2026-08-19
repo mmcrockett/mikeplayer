@@ -6,6 +6,7 @@ module MikePlayer
     RESET           = "\e[0m".freeze
     TITLE_COLOR     = "\e[1;36m".freeze # bold cyan
     DIM_COLOR       = "\e[2m".freeze    # dim gray
+    ELAPSED_COLOR   = "\e[1;37m".freeze # bold white
     COUNTDOWN_COLOR = "\e[33m".freeze   # yellow
     PLAY_COLOR      = "\e[32m".freeze   # green
     PAUSE_COLOR     = "\e[1;31m".freeze # bold red
@@ -50,7 +51,7 @@ module MikePlayer
 
       position  = colorize(@position, DIM_COLOR)
       title     = colorize(@title, TITLE_COLOR)
-      elapsed   = colorize(elapsed_info, DIM_COLOR)
+      elapsed   = colorize(elapsed_info, ELAPSED_COLOR)
       indicator = colorize(@indicator, @paused ? PAUSE_COLOR : PLAY_COLOR)
       count     = countdown ? colorize(mindicator, COUNTDOWN_COLOR) : ''
 
