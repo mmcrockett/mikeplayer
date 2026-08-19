@@ -6,7 +6,8 @@ module MikePlayer
     RESET           = "\e[0m".freeze
     TITLE_COLOR     = "\e[1;36m".freeze # bold cyan
     DIM_COLOR       = "\e[2m".freeze    # dim gray
-    ELAPSED_COLOR   = "\e[1;37m".freeze # bold white
+    BANNER_COLOR    = "\e[1;37m".freeze # bold white
+    ELAPSED_COLOR   = "\e[37m".freeze   # white
     COUNTDOWN_COLOR = "\e[33m".freeze   # yellow
     PLAY_COLOR      = "\e[32m".freeze   # green
     PAUSE_COLOR     = "\e[1;31m".freeze # bold red

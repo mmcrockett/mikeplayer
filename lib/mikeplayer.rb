@@ -49,7 +49,7 @@ module MikePlayer
     def play
       @playlist.shuffle! if @settings.shuffle?
 
-      puts Display.colorize("Mike Player v#{MikePlayer::VERSION}", Display::TITLE_COLOR)
+      puts Display.colorize("Mike Player v#{MikePlayer::VERSION}", Display::BANNER_COLOR)
       puts "#{Display.colorize("Playlist #{@playlist.info}", Display::DIM_COLOR)}\n"
 
       if (0 == @playlist.size)
