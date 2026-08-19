@@ -2,6 +2,13 @@ module MikePlayer
   class Display
     PAUSE_INDICATOR = '||'.freeze
     INDICATOR_SIZE  = 4
+    PROGRESS_WIDTH  = 40
+
+    TITLE_ROW = 4
+    BAR_ROW   = 5
+    HINT_ROW  = 7
+
+    HINT_TEXT = 'c: pause/play   v: next   z: previous   t: set timer   q: quit'.freeze
 
     RESET           = "\e[0m".freeze
     TITLE_COLOR     = "\e[1;36m".freeze # bold cyan
@@ -12,8 +19,8 @@ module MikePlayer
     PLAY_COLOR      = "\e[32m".freeze   # green
     PAUSE_COLOR     = "\e[1;31m".freeze # bold red
 
-    ENTER_ALT_SCREEN = "\e[?1049h\e[2J\e[H".freeze
-    EXIT_ALT_SCREEN  = "\e[?1049l".freeze
+    ENTER_ALT_SCREEN = "\e[?1049h\e[2J\e[H\e[?25l".freeze
+    EXIT_ALT_SCREEN  = "\e[?25h\e[?1049l".freeze
 
     def self.colorize(text, color)
       return text unless $stdout.tty?
@@ -31,20 +38,25 @@ module MikePlayer
       $stdout.flush
     end
 
-    def initialize
-      @width     = 0
-      @indicator = ''
-      @paused    = false
-      @changed   = false
-      @color     = $stdout.tty?
+    def initialize(fullscreen: false)
+      @width           = 0
+      @indicator       = ''
+      @paused          = false
+      @changed         = false
+      @color           = $stdout.tty?
+      @fullscreen      = fullscreen
+      @elapsed_seconds = 0
+      @length          = 0
     end
 
     def song_info=(v)
       @position = v[:position].freeze
       @title    = v[:title].freeze
+      @length   = v[:length].to_f
     end
 
     def elapsed=(v)
+      @elapsed_seconds = v
       @indicator = "#{'>' * (v % INDICATOR_SIZE)}".ljust(INDICATOR_SIZE)
       @paused    = false
       @changed   = true
@@ -61,6 +73,20 @@ module MikePlayer
     def display!(elapsed_info, countdown = nil)
       return unless changed?
 
+      if @fullscreen
+        display_panel!(elapsed_info, countdown)
+      else
+        display_line!(elapsed_info, countdown)
+      end
+    end
+
+    def changed?
+      true == @changed
+    end
+
+    private
+
+    def display_line!(elapsed_info, countdown)
       mindicator = "(#{countdown}↓) " if countdown
 
       position  = colorize(@position, DIM_COLOR)
@@ -82,11 +108,36 @@ module MikePlayer
       $stdout.flush
     end
 
-    def changed?
-      true == @changed
+    def display_panel!(elapsed_info, countdown)
+      mindicator = "(#{countdown}↓) " if countdown
+      count      = countdown ? colorize(mindicator, COUNTDOWN_COLOR) : ''
+      state      = colorize(@paused ? 'PAUSED' : 'PLAYING', @paused ? PAUSE_COLOR : PLAY_COLOR)
+
+      move_to(TITLE_ROW)
+      print("Playing #{colorize(@position, DIM_COLOR)}: #{colorize(@title, TITLE_COLOR)}")
+
+      move_to(BAR_ROW)
+      print("#{progress_bar} #{colorize(elapsed_info, ELAPSED_COLOR)} #{count}#{state}")
+
+      move_to(HINT_ROW)
+      print(colorize(HINT_TEXT, DIM_COLOR))
+
+      @changed = false
+
+      $stdout.flush
     end
 
-    private
+    def move_to(row)
+      print("\e[#{row};1H\e[2K")
+    end
+
+    def progress_bar
+      pct    = @length.positive? ? (@elapsed_seconds.to_f / @length).clamp(0, 1) : 0
+      filled = (pct * PROGRESS_WIDTH).round
+      bar    = "[#{'#' * filled}#{'-' * (PROGRESS_WIDTH - filled)}]"
+
+      colorize(bar, @paused ? PAUSE_COLOR : PLAY_COLOR)
+    end
 
     def colorize(text, color)
       return text unless @color

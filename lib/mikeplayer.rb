@@ -64,7 +64,7 @@ module MikePlayer
       end
 
       @thread = Thread.new do
-        @display = Display.new
+        @display = Display.new(fullscreen: @settings.fullscreen?)
         @song_i  = 0
 
         while (@song_i < @playlist.size)
