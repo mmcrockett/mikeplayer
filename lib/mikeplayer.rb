@@ -49,6 +49,9 @@ module MikePlayer
     def play
       @playlist.shuffle! if @settings.shuffle?
 
+      Display.push_title
+      at_exit { Display.pop_title }
+
       if @settings.fullscreen?
         Display.enter_fullscreen
         at_exit { Display.exit_fullscreen }
